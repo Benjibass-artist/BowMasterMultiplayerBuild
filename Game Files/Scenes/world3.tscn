@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bktigal2j36ml" path="res://tilesets/PS_Tileset_09_Animated.png" id="2_rqup5"]
 [ext_resource type="PackedScene" uid="uid://12bg2y8wjpir" path="res://Scenes/player.tscn" id="3_la8tn"]
 [ext_resource type="Texture2D" uid="uid://cr7f0a2mbvvyr" path="res://tilesets/PS_Items.png" id="3_mac6c"]
-[ext_resource type="Script" path="res://Scripts/Multiplayer/multiplayer_spawner.gd" id="5_d16j2"]
+[ext_resource type="Script" uid="uid://6cer33d278mr" path="res://Scripts/Multiplayer/multiplayer_spawner.gd" id="5_d16j2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_47rws"]
 texture = ExtResource("1_jlm7t")
