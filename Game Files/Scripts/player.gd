@@ -43,6 +43,7 @@ func rpc_take_damage(amount: int) -> void:
 # Simple damage function without RPC
 @rpc("any_peer")
 func take_damage(amount: int) -> void:
+	print("take_damage called on peer:", multiplayer.get_unique_id(), " authority:", is_multiplayer_authority(), " amount:", amount)
 	if not is_multiplayer_authority():
 		return
 	hp -= amount
@@ -183,10 +184,13 @@ func _set_value(value):
 #attack function for arrow
 @rpc("any_peer")
 func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
-	# skip on the original shooter (optional)
+	print("spawn_arrow called on peer:", multiplayer.get_unique_id(), " authority:", is_multiplayer_authority())
+	# Don't spawn on the original shooter since they already spawned it locally
 	if is_multiplayer_authority():
+		print("Skipping spawn on authority (shooter)")
 		return
 
+	print("Spawning arrow on remote client")
 	var arrow = arrow_scene.instantiate()
 	arrow.global_position = pos
 	arrow.launch(vel)
@@ -198,6 +202,7 @@ func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	add_child(arrow)
 
 func shoot():
+	print("shoot() called on peer:", multiplayer.get_unique_id(), " authority:", is_multiplayer_authority())
 	var arrow = arrow_scene.instantiate()
 	arrow.position = $bodyAnimation/frontArm/hand.global_position
 	arrow.rotator = $bodyAnimation/frontArm/hand.global_rotation
@@ -209,7 +214,7 @@ func shoot():
 	arrow.set_multiplayer_authority(get_multiplayer_authority())
 	
 	get_parent().add_child(arrow)
-	
+	print("Local arrow spawned, calling spawn_arrow RPC")
 	rpc("spawn_arrow", arrow.global_position, arrow.velocity, arrow.rotation)
 
 # Helper function to perform linear interpolation

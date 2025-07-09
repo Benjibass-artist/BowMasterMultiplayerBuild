@@ -35,6 +35,10 @@ func _physics_process(delta):
 func launch(initial_velocity : Vector2):
 	velocity = initial_velocity
 
+@rpc("any_peer")
+func networked_queue_free():
+	queue_free()
+
 func _on_body_entered(body):
 	print("Arrow hit something: ", body.name if body else "unknown")
 	
@@ -45,6 +49,7 @@ func _on_body_entered(body):
 		gravity = 0
 		velocity = Vector2.ZERO
 		can_damage= false
+		rpc("networked_queue_free")
 		
 	if body.is_in_group("Player") and can_damage:
 		print("Arrow hit Player: ", body.name)
@@ -54,4 +59,4 @@ func _on_body_entered(body):
 			body.rpc_id(body.get_multiplayer_authority(), "take_damage", damage)
 		else:
 			print("Player doesn't have take_damage method!")
-		queue_free()
+		rpc("networked_queue_free")
