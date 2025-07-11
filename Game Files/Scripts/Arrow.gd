@@ -37,21 +37,18 @@ func launch(initial_velocity : Vector2):
 
 
 func _on_body_entered(body):
-	if not is_multiplayer_authority():
-		return
 	if body is TileMap:
 		mass = 0
 		speed = 0
 		gravity = 0
-		velocity = -(arrow_direction)
-		can_damage= false
-	if not is_multiplayer_authority():
+		velocity = Vector2.ZERO
+		can_damage = false
 		return
-
-	if body.has_method("rpc_take_damage"):
+	# Only the authority applies damage to players
+	if body.has_method("rpc_take_damage") and can_damage:
 		var target_peer = body.get_multiplayer_authority()
-		# Prevent self-damage
 		if target_peer == owner_id:
 			return
-		rpc_id(target_peer, "rpc_take_damage", damage)
-	queue_free()
+		if is_multiplayer_authority():
+			rpc_id(target_peer, "rpc_take_damage", damage)
+		queue_free()
