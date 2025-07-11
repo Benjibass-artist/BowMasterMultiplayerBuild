@@ -185,35 +185,28 @@ func _set_value(value):
 @rpc("any_peer")
 func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	print("spawn_arrow called on peer:", multiplayer.get_unique_id(), " authority:", is_multiplayer_authority())
-	# Don't spawn on the original shooter since they already spawned it locally
 	if is_multiplayer_authority():
 		print("Skipping spawn on authority (shooter)")
 		return
-
 	print("Spawning arrow on remote client")
 	var arrow = arrow_scene.instantiate()
 	arrow.global_position = pos
 	arrow.launch(vel)
 	arrow.rotation = rot
-	
-	# Set the arrow's multiplayer authority to the original shooter
 	arrow.set_multiplayer_authority(get_multiplayer_authority())
-	
-	add_child(arrow)
+	# Add to World node
+	get_tree().get_root().get_node("World").add_child(arrow)
 
 func shoot():
 	print("shoot() called on peer:", multiplayer.get_unique_id(), " authority:", is_multiplayer_authority())
 	var arrow = arrow_scene.instantiate()
-	arrow.position = $bodyAnimation/frontArm/hand.global_position
+	arrow.global_position = $bodyAnimation/frontArm/hand.global_position
 	arrow.rotator = $bodyAnimation/frontArm/hand.global_rotation
 	arrow.arrow_direction = (position - get_global_mouse_position()).normalized()
-	
 	arrow.velocity = global_position.direction_to(get_global_mouse_position()) * arrow.speed * test
-	
-	# Set the arrow's multiplayer authority to the shooter
 	arrow.set_multiplayer_authority(get_multiplayer_authority())
-	
-	get_parent().add_child(arrow)
+	# Add to World node
+	get_tree().get_root().get_node("World").add_child(arrow)
 	print("Local arrow spawned, calling spawn_arrow RPC")
 	rpc("spawn_arrow", arrow.global_position, arrow.velocity, arrow.rotation)
 
