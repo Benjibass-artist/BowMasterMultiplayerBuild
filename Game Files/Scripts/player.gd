@@ -43,12 +43,18 @@ func rpc_take_damage(amount: int) -> void:
 # Simple damage function without RPC
 @rpc("any_peer")
 func take_damage(amount: int) -> void:
+<<<<<<< HEAD
 	print("take_damage called on peer:", multiplayer.get_unique_id(), " authority:", is_multiplayer_authority(), " amount:", amount)
 	if not is_multiplayer_authority():
 		return
+=======
+	print("take_damage called with amount: ", amount)
+	print("Current hp before damage: ", hp)
+>>>>>>> cc23844bc796b37f232e4e17276a28c470c840fd
 	hp -= amount
+	print("New hp after damage: ", hp)
 	healthChanged.emit()
-	rpc("sync_hp", hp)
+	print("healthChanged signal emitted")
 
 @rpc("any_peer")
 func _shoot_arrow(initial_velocity: Vector2) -> void:
@@ -228,8 +234,3 @@ func _on_body_animation__finished():
 		if $bodyAnimation.frame == 4:
 			$bodyAnimation.pause()
 	pass # Replace with function body.
-
-@rpc("any_peer")
-func sync_hp(new_hp: int) -> void:
-	hp = new_hp
-	healthChanged.emit()
