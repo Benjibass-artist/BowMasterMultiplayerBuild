@@ -45,7 +45,6 @@ func _shoot_arrow(initial_velocity: Vector2) -> void:
 	arrow.launch(initial_velocity)
 
 	# 2) tell every other peer to do the same
-	#    (we’ll define spawn_arrow() below)
 	rpc("spawn_arrow", arrow.global_position, initial_velocity, arrow.rotation)
 
 

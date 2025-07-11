@@ -50,5 +50,5 @@ func _on_body_entered(body):
 		if target_peer == owner_id:
 			return
 		if is_multiplayer_authority():
-			rpc_id(target_peer, "rpc_take_damage", damage)
+			body.rpc_id(target_peer, "rpc_take_damage", damage)
 		queue_free()
