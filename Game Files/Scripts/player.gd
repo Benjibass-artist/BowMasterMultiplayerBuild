@@ -180,6 +180,12 @@ func rpc_take_damage(amount: int) -> void:
 	hp -= amount
 	healthChanged.emit()
 	print("NEW HP:", hp)
+	if hp <= 0 and player_alive:
+		player_alive = false
+		$CollisionShape2D.hide()
+		$bodyAnimation/b_arm.hide()
+		$bodyAnimation/frontArm.hide()
+		$bodyAnimation.play("death")
 
 func _shoot_arrow(initial_velocity: Vector2) -> void:
 	if is_multiplayer_authority():
