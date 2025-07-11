@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://by2ybuf18pf6w"]
 
 [ext_resource type="Texture2D" uid="uid://bxgvvm6cjtkiw" path="res://Sprites/Archer FULLBODY Sprite Sheet.png" id="1_1ymwg"]
-[ext_resource type="Script" uid="uid://csinq3iunvb7b" path="res://Scripts/Arrow.gd" id="1_aa1t8"]
-[ext_resource type="Script" uid="uid://ns1536iu4cx4" path="res://Scripts/ArrowTimer.gd" id="3_k0oei"]
+[ext_resource type="Script" uid="uid://2hwrj0ljevsb" path="res://Scripts/Arrow.gd" id="1_aa1t8"]
+[ext_resource type="Script" uid="uid://0axofpttqwge" path="res://Scripts/ArrowTimer.gd" id="3_k0oei"]
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_cyn61"]
 properties/0/path = NodePath(".:rotation")
@@ -17,6 +17,7 @@ z_index = 5
 position = Vector2(0, 4.76837e-07)
 rotation = -1.5708
 scale = Vector2(0.00944851, 0.0110329)
+collision_layer = 0
 script = ExtResource("1_aa1t8")
 
 [node name="Node2D" type="Sprite2D" parent="."]

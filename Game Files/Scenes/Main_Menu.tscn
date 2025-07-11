@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://e7r8mbylgv4v"]
 
-[ext_resource type="Script" uid="uid://c2qiyqdurm2y" path="res://Scripts/Steam/main_menu.gd" id="1_eiie3"]
-[ext_resource type="Script" uid="uid://blavdd4811ad1" path="res://Scripts/Steam/steam.gd" id="1_k56af"]
+[ext_resource type="Script" uid="uid://8i2wf3holjt5" path="res://Scripts/Steam/main_menu.gd" id="1_eiie3"]
+[ext_resource type="Script" uid="uid://ddude07k4ump7" path="res://Scripts/Steam/steam.gd" id="1_k56af"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_eiie3")

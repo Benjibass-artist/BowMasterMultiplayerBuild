@@ -18,7 +18,6 @@ func _sync_transform(remote_pos: Vector2, remote_rot: float) -> void:
 func _ready() -> void:
 	# ← connect takes the signal name and a Callable now
 	connect("body_entered", Callable(self, "_on_body_entered"))
-	
 func _physics_process(delta):
 	if velocity:
 		look_at(global_position + velocity.normalized())
@@ -35,38 +34,18 @@ func _physics_process(delta):
 func launch(initial_velocity : Vector2):
 	velocity = initial_velocity
 
-@rpc("any_peer")
-func networked_queue_free():
-	queue_free()
 
 func _on_body_entered(body):
-	print("Arrow hit something: ", body.name if body else "unknown")
-	
 	if body is TileMap:
-		print("Arrow hit TileMap")
 		mass = 0
 		speed = 0
 		gravity = 0
+		#velocity = -(arrow_direction)
 		velocity = Vector2.ZERO
 		can_damage= false
-		rpc("networked_queue_free")
+	if not is_multiplayer_authority():
+		return
 		
 	if body.is_in_group("Player") and can_damage:
-<<<<<<< HEAD
-		can_damage = false
-		if body.get_multiplayer_authority() == multiplayer.get_unique_id():
-			body.rpc("request_damage", damage, get_multiplayer_authority())
-=======
-		print("Arrow hit Player: ", body.name)
-		print("Player has take_damage method: ", body.has_method("take_damage"))
-		
-		if body.has_method("take_damage"):
-			print("Calling take_damage function")
-			body.take_damage(damage)
-			
-			# Also sync damage to other peers
-			body.rpc("take_damage", damage)
-		else:
-			print("Player doesn't have take_damage method!")
->>>>>>> cc23844bc796b37f232e4e17276a28c470c840fd
+		body.rpc("rpc_take_damage", damage)
 		queue_free()
