@@ -10,11 +10,16 @@ var rotator: float
 var velocity = Vector2(0, 0)
 var owner_id: int = -1
 
-@rpc("authority", "unreliable")
+# 1️⃣ Change your sync RPC so the *authority* can push updates to *others*:
+@rpc("any_peer", "unreliable")
 func _sync_transform(remote_pos: Vector2, remote_rot: float) -> void:
-	if is_multiplayer_authority():
-		global_position = remote_pos
-		rotation = remote_rot
+	global_position = remote_pos
+	rotation = remote_rot
+
+# 2️⃣ Add a “destroy on all peers” RPC
+@rpc("any_peer")
+func _destroy() -> void:
+	queue_free()
 
 func _ready() -> void:
 	# ← connect takes the signal name and a Callable now
@@ -37,17 +42,19 @@ func launch(initial_velocity : Vector2):
 	velocity = initial_velocity
 
 
+# 3️⃣ When we hit something, tell everyone to destroy this arrow
 func _on_body_entered(body):
-	# Only the server processes collisions for damage and arrow deletion
-	if not get_tree().get_multiplayer().is_server():
+	if not is_multiplayer_authority():
 		return
+
+	# hitting a wall/tile → destroy it everywhere
 	if body is TileMap:
-		mass = 0
-		speed = 0
-		gravity = 0
-		velocity = Vector2.ZERO
-		can_damage = false
+		rpc("_destroy")      # queue_free on all peers
+		queue_free()         # ...and here locally
 		return
+
+	# hitting a player → do damage, then destroy everywhere
 	if body.has_method("rpc_take_damage") and can_damage:
 		body.rpc("rpc_take_damage", damage)
+		rpc("_destroy")
 		queue_free()

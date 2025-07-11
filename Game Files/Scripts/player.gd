@@ -143,7 +143,7 @@ func _physics_process(delta):
 	if Input.is_action_just_released("fire") and can_fire and player_alive:
 		can_fire = false
 		$AttackInterval.start()
-		shoot()
+		_shoot_arrow(global_position.direction_to(get_global_mouse_position()) * arrow_speed * test)
 		increment = 0
 		#bowCharge.value = 0
 
@@ -153,45 +153,27 @@ func _set_value(value):
 	test = clamp(value,0,1.3)
 
 #attack function for arrow
-@rpc("authority")
+@rpc("any_peer")
 func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
-	# skip on the original shooter (optional)
 	if is_multiplayer_authority():
-		return
-
+		return   # the shooter already did it locally
 	var arrow = arrow_scene.instantiate()
 	add_child(arrow)
 	arrow.global_position = pos
 	arrow.launch(vel)
 	arrow.rotation = rot
-func shoot():
-	var arrow = arrow_scene.instantiate()
-	arrow.position = $bodyAnimation/frontArm/hand.global_position
-	arrow.rotator = $bodyAnimation/frontArm/hand.global_rotation
-	arrow.arrow_direction = (position - get_global_mouse_position()).normalized()
-	
-	arrow.velocity = global_position.direction_to(get_global_mouse_position()) * arrow.speed * test
-	arrow.owner_id = get_multiplayer_authority()
-	get_parent().add_child(arrow)
-	
-	rpc("spawn_arrow", arrow.global_position, arrow.velocity, arrow.rotation)
 
 @rpc("any_peer")
 func rpc_take_damage(amount: int) -> void:
-	if not get_tree().get_multiplayer().is_server():
-		return
 	hp -= amount
 	healthChanged.emit()
-	print(hp)
-	
+	print("NEW HP:", hp)
+
 func _shoot_arrow(initial_velocity: Vector2) -> void:
-	# 1) locally spawn the arrow
 	var arrow = arrow_scene.instantiate()
 	add_child(arrow)
 	arrow.global_position = $bodyAnimation/frontArm/hand.global_position
 	arrow.launch(initial_velocity)
-
-	# 2) tell every other peer to do the same
 	rpc("spawn_arrow", arrow.global_position, initial_velocity, arrow.rotation)
 
 # Helper function to perform linear interpolation
