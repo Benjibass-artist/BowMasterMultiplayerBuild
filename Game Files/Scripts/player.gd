@@ -186,6 +186,9 @@ func rpc_take_damage(amount: int) -> void:
 		$bodyAnimation/b_arm.hide()
 		$bodyAnimation/frontArm.hide()
 		$bodyAnimation.play("death")
+		if $bodyAnimation.animation == "death":
+			if $bodyAnimation.frame == 4:
+				$bodyAnimation.pause()
 
 func _shoot_arrow(initial_velocity: Vector2) -> void:
 	if is_multiplayer_authority():
