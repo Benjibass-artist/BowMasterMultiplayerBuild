@@ -43,8 +43,14 @@ func rpc_take_damage(amount: int) -> void:
 # Simple damage function without RPC
 @rpc("any_peer")
 func take_damage(amount: int) -> void:
+<<<<<<< HEAD
+	print("take_damage called on peer:", multiplayer.get_unique_id(), " authority:", is_multiplayer_authority(), " amount:", amount)
+	if not is_multiplayer_authority():
+		return
+=======
 	print("take_damage called with amount: ", amount)
 	print("Current hp before damage: ", hp)
+>>>>>>> cc23844bc796b37f232e4e17276a28c470c840fd
 	hp -= amount
 	print("New hp after damage: ", hp)
 	healthChanged.emit()
@@ -182,36 +188,31 @@ func _set_value(value):
 	test = clamp(value,0,1.3)
 
 #attack function for arrow
-@rpc("any_peer")
-func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
-	# skip on the original shooter (optional)
-	if is_multiplayer_authority():
-		return
-
-	var arrow = arrow_scene.instantiate()
-	arrow.global_position = pos
-	arrow.launch(vel)
-	arrow.rotation = rot
-	
-	# Set the arrow's multiplayer authority to the original shooter
-	arrow.set_multiplayer_authority(get_multiplayer_authority())
-	
-	add_child(arrow)
-
 func shoot():
 	var arrow = arrow_scene.instantiate()
-	arrow.position = $bodyAnimation/frontArm/hand.global_position
-	arrow.rotator = $bodyAnimation/frontArm/hand.global_rotation
-	arrow.arrow_direction = (position - get_global_mouse_position()).normalized()
-	
-	arrow.velocity = global_position.direction_to(get_global_mouse_position()) * arrow.speed * test
-	
-	# Set the arrow's multiplayer authority to the shooter
+	arrow.global_position = $bodyAnimation/frontArm/hand.global_position
+	arrow.rotation = $bodyAnimation/frontArm/hand.global_rotation
 	arrow.set_multiplayer_authority(get_multiplayer_authority())
-	
-	get_parent().add_child(arrow)
-	
-	rpc("spawn_arrow", arrow.global_position, arrow.velocity, arrow.rotation)
+	get_tree().get_root().get_node("World").add_child(arrow)
+	rpc("spawn_arrow", arrow.global_position, arrow.rotation, get_multiplayer_authority())
+
+@rpc("any_peer")
+func spawn_arrow(pos: Vector2, rot: float, shooter_id: int) -> void:
+	if get_multiplayer_authority() == shooter_id:
+		return # Don't spawn twice on the shooter's client
+	var arrow = arrow_scene.instantiate()
+	arrow.global_position = pos
+	arrow.rotation = rot
+	arrow.set_multiplayer_authority(shooter_id)
+	get_tree().get_root().get_node("World").add_child(arrow)
+
+@rpc("any_peer")
+func request_damage(amount: int, shooter_id: int) -> void:
+	if not is_multiplayer_authority():
+		return
+	hp -= amount
+	healthChanged.emit()
+	rpc("sync_hp", hp)
 
 # Helper function to perform linear interpolation
 func lerp(start, end, weight):
