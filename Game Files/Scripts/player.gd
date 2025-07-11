@@ -178,6 +178,8 @@ func shoot():
 
 @rpc("any_peer")
 func rpc_take_damage(amount: int) -> void:
+	if not get_tree().is_network_server():
+		return
 	hp -= amount
 	healthChanged.emit()
 	print(hp)

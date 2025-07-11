@@ -38,6 +38,9 @@ func launch(initial_velocity : Vector2):
 
 
 func _on_body_entered(body):
+	# Only the server processes collisions for damage and arrow deletion
+	if not get_tree().is_network_server():
+		return
 	if body is TileMap:
 		mass = 0
 		speed = 0
@@ -45,11 +48,6 @@ func _on_body_entered(body):
 		velocity = Vector2.ZERO
 		can_damage = false
 		return
-	# Only the authority applies damage to players
 	if body.has_method("rpc_take_damage") and can_damage:
-		var target_peer = body.get_multiplayer_authority()
-		if target_peer == owner_id:
-			return
-		if is_multiplayer_authority():
-			body.rpc_id(target_peer, "rpc_take_damage", damage)
+		body.rpc("rpc_take_damage", damage)
 		queue_free()
