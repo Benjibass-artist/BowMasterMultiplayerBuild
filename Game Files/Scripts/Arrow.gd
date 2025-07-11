@@ -49,6 +49,6 @@ func _on_body_entered(body):
 		var target_peer = body.get_multiplayer_authority()
 		if target_peer == owner_id:
 			return
-		if get_tree().is_network_server():
+		if get_tree().get_multiplayer().is_server():
 			rpc_id(target_peer, "rpc_take_damage", damage)
 			queue_free()
