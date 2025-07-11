@@ -3,9 +3,9 @@ extends TextureProgressBar
 
 
 func _ready():
-	if is_multiplayer_authority():
-		player.healthChanged.connect(update)
-		update()
+
+	player.healthChanged.connect(update)
+	update()
 	
 	
 func update():
