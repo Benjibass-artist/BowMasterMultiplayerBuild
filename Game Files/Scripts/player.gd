@@ -31,21 +31,6 @@ var increment = 0.0
 
 
 @export var arrow_speed: float = 700
-@rpc("any_peer")
-func rpc_take_damage(amount: int) -> void:
-	hp -= amount
-	healthChanged.emit()
-	print(hp)
-	
-func _shoot_arrow(initial_velocity: Vector2) -> void:
-	# 1) locally spawn the arrow
-	var arrow = arrow_scene.instantiate()
-	add_child(arrow)
-	arrow.global_position = $bodyAnimation/frontArm/hand.global_position
-	arrow.launch(initial_velocity)
-
-	# 2) tell every other peer to do the same
-	rpc("spawn_arrow", arrow.global_position, initial_velocity, arrow.rotation)
 
 
 
@@ -168,7 +153,7 @@ func _set_value(value):
 	test = clamp(value,0,1.3)
 
 #attack function for arrow
-@rpc("any_peer")
+@rpc("authority")
 func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	# skip on the original shooter (optional)
 	if is_multiplayer_authority():
@@ -190,6 +175,22 @@ func shoot():
 	get_parent().add_child(arrow)
 	
 	rpc("spawn_arrow", arrow.global_position, arrow.velocity, arrow.rotation)
+
+@rpc("authority")
+func rpc_take_damage(amount: int) -> void:
+	hp -= amount
+	healthChanged.emit()
+	print(hp)
+	
+func _shoot_arrow(initial_velocity: Vector2) -> void:
+	# 1) locally spawn the arrow
+	var arrow = arrow_scene.instantiate()
+	add_child(arrow)
+	arrow.global_position = $bodyAnimation/frontArm/hand.global_position
+	arrow.launch(initial_velocity)
+
+	# 2) tell every other peer to do the same
+	rpc("spawn_arrow", arrow.global_position, initial_velocity, arrow.rotation)
 
 # Helper function to perform linear interpolation
 func lerp(start, end, weight):
