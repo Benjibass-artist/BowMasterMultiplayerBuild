@@ -52,11 +52,7 @@ func _on_body_entered(body):
 		rpc("networked_queue_free")
 		
 	if body.is_in_group("Player") and can_damage:
-		print("Arrow hit Player: ", body.name)
-		print("Player has take_damage method: ", body.has_method("take_damage"))
-		if body.has_method("take_damage"):
-			print("Calling take_damage function via rpc_id")
-			body.rpc_id(body.get_multiplayer_authority(), "take_damage", damage)
-		else:
-			print("Player doesn't have take_damage method!")
-		rpc("networked_queue_free")
+		can_damage = false
+		if body.get_multiplayer_authority() == multiplayer.get_unique_id():
+			body.rpc("request_damage", damage, get_multiplayer_authority())
+		queue_free()
