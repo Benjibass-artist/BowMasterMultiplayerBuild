@@ -187,6 +187,7 @@ func shoot():
 	arrow.arrow_direction = (position - get_global_mouse_position()).normalized()
 	
 	arrow.velocity = global_position.direction_to(get_global_mouse_position()) * arrow.speed * test
+	arrow.owner_id = get_multiplayer_authority()
 	get_parent().add_child(arrow)
 	
 	rpc("spawn_arrow", arrow.global_position, arrow.velocity, arrow.rotation)

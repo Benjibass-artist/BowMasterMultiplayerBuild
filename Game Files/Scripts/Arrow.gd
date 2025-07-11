@@ -8,6 +8,7 @@ var speed = 700
 var arrow_direction
 var rotator: float
 var velocity = Vector2(0, 0)
+var owner_id: int = -1
 
 @rpc("any_peer", "unreliable")
 func _sync_transform(remote_pos: Vector2, remote_rot: float) -> void:
@@ -36,15 +37,21 @@ func launch(initial_velocity : Vector2):
 
 
 func _on_body_entered(body):
+	if not is_multiplayer_authority():
+		return
 	if body is TileMap:
 		mass = 0
 		speed = 0
 		gravity = 0
-		#velocity = -(arrow_direction)
-		velocity = Vector2.ZERO
+		velocity = -(arrow_direction)
 		can_damage= false
-	# Allow all clients to process collision for visuals, but only authority applies damage
-	if body.is_in_group("Player") and can_damage:
-		if is_multiplayer_authority():
-			body.rpc("rpc_take_damage", damage)
-		queue_free()
+	if not is_multiplayer_authority():
+		return
+
+	if body.has_method("rpc_take_damage"):
+		var target_peer = body.get_multiplayer_authority()
+		# Prevent self-damage
+		if target_peer == owner_id:
+			return
+		rpc_id(target_peer, "rpc_take_damage", damage)
+	queue_free()
