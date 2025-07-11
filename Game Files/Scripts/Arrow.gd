@@ -44,11 +44,11 @@ func _on_body_entered(body):
 		velocity = Vector2.ZERO
 		can_damage = false
 		return
-	# Only the authority applies damage to players
+	# Only the server/host applies damage to players
 	if body.has_method("rpc_take_damage") and can_damage:
 		var target_peer = body.get_multiplayer_authority()
 		if target_peer == owner_id:
 			return
-		if is_multiplayer_authority():
+		if get_tree().is_network_server():
 			rpc_id(target_peer, "rpc_take_damage", damage)
-		queue_free()
+			queue_free()
