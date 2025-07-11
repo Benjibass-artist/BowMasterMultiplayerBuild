@@ -39,7 +39,7 @@ func launch(initial_velocity : Vector2):
 
 func _on_body_entered(body):
 	# Only the server processes collisions for damage and arrow deletion
-	if not get_tree().is_server():
+	if not get_tree().get_multiplayer().is_server():
 		return
 	if body is TileMap:
 		mass = 0
