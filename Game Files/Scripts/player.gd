@@ -34,6 +34,7 @@ var increment = 0.0
 @rpc("any_peer")
 func rpc_take_damage(amount: int) -> void:
 	hp -= amount
+	healthChanged.emit()
 	print(hp)
 	
 func _shoot_arrow(initial_velocity: Vector2) -> void:

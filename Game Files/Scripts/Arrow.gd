@@ -43,9 +43,8 @@ func _on_body_entered(body):
 		#velocity = -(arrow_direction)
 		velocity = Vector2.ZERO
 		can_damage= false
-	if not is_multiplayer_authority():
-		return
-		
+	# Allow all clients to process collision for visuals, but only authority applies damage
 	if body.is_in_group("Player") and can_damage:
-		body.rpc("rpc_take_damage", damage)
+		if is_multiplayer_authority():
+			body.rpc("rpc_take_damage", damage)
 		queue_free()
