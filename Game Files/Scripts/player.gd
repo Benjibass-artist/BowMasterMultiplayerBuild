@@ -176,7 +176,7 @@ func shoot():
 	
 	rpc("spawn_arrow", arrow.global_position, arrow.velocity, arrow.rotation)
 
-@rpc("authority")
+@rpc("any_peer")
 func rpc_take_damage(amount: int) -> void:
 	hp -= amount
 	healthChanged.emit()

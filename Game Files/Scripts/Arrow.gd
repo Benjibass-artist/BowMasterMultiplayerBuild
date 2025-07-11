@@ -10,15 +10,16 @@ var rotator: float
 var velocity = Vector2(0, 0)
 var owner_id: int = -1
 
-@rpc("any_peer", "unreliable")
+@rpc("authority", "unreliable")
 func _sync_transform(remote_pos: Vector2, remote_rot: float) -> void:
-	if not is_multiplayer_authority():
+	if is_multiplayer_authority():
 		global_position = remote_pos
 		rotation = remote_rot
 
 func _ready() -> void:
 	# ← connect takes the signal name and a Callable now
 	connect("body_entered", Callable(self, "_on_body_entered"))
+	
 func _physics_process(delta):
 	if velocity:
 		look_at(global_position + velocity.normalized())
