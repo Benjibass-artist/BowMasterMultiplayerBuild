@@ -153,7 +153,7 @@ func _set_value(value):
 	test = clamp(value,0,1.3)
 
 #attack function for arrow
-@rpc("call_remote", "authority", "reliable")
+@rpc("authority", "call_remote", "reliable")
 func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	if is_multiplayer_authority():
 		return   # the shooter already did it locally
@@ -163,7 +163,7 @@ func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	arrow.launch(vel)
 	arrow.rotation = rot
 
-@rpc("call_remote", "any_peer", "reliable")
+@rpc("any_peer", "call_remote", "reliable")
 func request_spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	# Only the host should run this
 	if not is_multiplayer_authority():
@@ -175,7 +175,7 @@ func request_spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	arrow.launch(vel)
 	rpc("spawn_arrow", pos, vel, rot)
 	
-@rpc("call_remote", "reliable")
+@rpc("authority", "call_remote", "reliable")
 func rpc_take_damage(amount: int) -> void:
 	hp -= amount
 	healthChanged.emit()

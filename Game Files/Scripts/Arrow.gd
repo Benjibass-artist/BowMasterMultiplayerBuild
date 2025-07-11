@@ -11,13 +11,13 @@ var velocity = Vector2(0, 0)
 var owner_id: int = -1
 
 # 1️⃣ Change your sync RPC so the *authority* can push updates to *others*:
-@rpc("call_remote", "authority", "unreliable")
+@rpc("authority", "call_remote", "unreliable")
 func _sync_transform(remote_pos: Vector2, remote_rot: float) -> void:
 	global_position = remote_pos
 	rotation = remote_rot
 
 # 2️⃣ Add a “destroy on all peers” RPC
-@rpc("call_remote", "authority", "reliable")
+@rpc("authority", "call_remote", "reliable")
 func _destroy() -> void:
 	queue_free()
 
@@ -46,7 +46,8 @@ func launch(initial_velocity : Vector2):
 func _on_body_entered(body: Node) -> void:
 	if is_multiplayer_authority():
 		if body.has_method("rpc_take_damage") and can_damage:
-			# Tell each client’s player instance to take damage
-			body.rpc("rpc_take_damage", damage)
+			# Host applies damage locally and broadcasts it
+			body.call("rpc_take_damage", damage)
+			rpc("rpc_take_damage", damage)
 		rpc("_destroy")
 		queue_free()
