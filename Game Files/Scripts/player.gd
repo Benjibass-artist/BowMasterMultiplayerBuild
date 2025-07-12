@@ -163,7 +163,7 @@ func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	arrow.launch(vel)
 	arrow.rotation = rot
 
-@rpc("any_peer", "call_remote", "reliable")
+@rpc("any_peer", "call_remote", "unreliable")
 func request_spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	# Only the host should run this
 	if not is_multiplayer_authority():
