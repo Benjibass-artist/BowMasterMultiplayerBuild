@@ -185,6 +185,7 @@ func rpc_take_damage(amount: int) -> void:
 		$CollisionShape2D.hide()
 		$bodyAnimation/b_arm.hide()
 		$bodyAnimation/frontArm.hide()
+		$".".hide()
 		$bodyAnimation.play("death")
 		if $bodyAnimation.animation == "death":
 			if $bodyAnimation.frame == 4:
