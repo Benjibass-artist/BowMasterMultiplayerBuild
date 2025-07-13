@@ -163,19 +163,19 @@ func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
 	arrow.launch(vel)
 	arrow.rotation = rot
 
-@rpc("any_peer", "call_remote", "unreliable")
-func request_spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
-	# Only the host should run this
-	if not is_multiplayer_authority():
-		return
-	var arrow = arrow_scene.instantiate()
-	add_child(arrow)
-	arrow.global_position = pos
-	arrow.rotation = rot
-	arrow.launch(vel)
-	rpc("spawn_arrow", pos, vel, rot)
+#@rpc("any_peer", "call_remote", "unreliable")
+#func request_spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
+	## Only the host should run this
+	#if not is_multiplayer_authority():
+		#return
+	#var arrow = arrow_scene.instantiate()
+	#add_child(arrow)
+	#arrow.global_position = pos
+	#arrow.rotation = rot
+	#arrow.launch(vel)
+	#rpc("spawn_arrow", pos, vel, rot)
 	
-@rpc("authority", "call_remote", "reliable")
+@rpc("any_peer", "reliable")
 func rpc_take_damage(amount: int) -> void:
 	hp -= amount
 	healthChanged.emit()
@@ -200,11 +200,11 @@ func _shoot_arrow(initial_velocity: Vector2) -> void:
 		arrow.rotation = arrow.global_rotation
 		arrow.launch(initial_velocity)
 		rpc("spawn_arrow", arrow.global_position, initial_velocity, arrow.rotation)
-	else:
-		# Client: request server to spawn for you
-		var start_pos = $bodyAnimation/frontArm/hand.global_position
-		var rotation = initial_velocity.angle()
-		rpc_id(1, "request_spawn_arrow", start_pos, initial_velocity, rotation)
+	#else:
+		## Client: request server to spawn for you
+		#var start_pos = $bodyAnimation/frontArm/hand.global_position
+		#var rotation = initial_velocity.angle()
+		#rpc_id(1, "request_spawn_arrow", start_pos, initial_velocity, rotation)
 
 # Helper function to perform linear interpolation
 func lerp(start, end, weight):

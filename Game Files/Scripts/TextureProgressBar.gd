@@ -3,7 +3,6 @@ extends TextureProgressBar
 
 
 func _ready():
-
 	player.healthChanged.connect(update)
 	update()
 	

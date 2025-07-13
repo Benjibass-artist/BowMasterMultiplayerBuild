@@ -289,6 +289,9 @@ properties/8/replication_mode = 1
 properties/9/path = NodePath("bodyAnimation:visible")
 properties/9/spawn = true
 properties/9/replication_mode = 1
+properties/10/path = NodePath("CanvasLayer/TextureProgressBar:value")
+properties/10/spawn = true
+properties/10/replication_mode = 1
 
 [node name="player" type="CharacterBody2D" groups=["Player"]]
 z_index = 5
