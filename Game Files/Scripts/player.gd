@@ -153,15 +153,15 @@ func _set_value(value):
 	test = clamp(value,0,1.3)
 
 #attack function for arrow
-@rpc("authority", "call_remote", "reliable")
-func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
-	if is_multiplayer_authority():
-		return   # the shooter already did it locally
-	var arrow = arrow_scene.instantiate()
-	add_child(arrow)
-	arrow.global_position = pos
-	arrow.launch(vel)
-	arrow.rotation = rot
+#@rpc("authority", "call_remote", "reliable")
+#func spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
+	#if is_multiplayer_authority():
+		#return 
+	#var arrow = arrow_scene.instantiate()
+	#add_child(arrow)
+	#arrow.global_position = pos
+	#arrow.launch(vel)
+	#arrow.rotation = rot
 
 #@rpc("any_peer", "call_remote", "unreliable")
 #func request_spawn_arrow(pos: Vector2, vel: Vector2, rot: float) -> void:
@@ -199,7 +199,7 @@ func _shoot_arrow(initial_velocity: Vector2) -> void:
 		arrow.global_position = $bodyAnimation/frontArm/hand.global_position
 		arrow.rotation = arrow.global_rotation
 		arrow.launch(initial_velocity)
-		rpc("spawn_arrow", arrow.global_position, initial_velocity, arrow.rotation)
+		#rpc("spawn_arrow", arrow.global_position, initial_velocity, arrow.rotation)
 	#else:
 		## Client: request server to spawn for you
 		#var start_pos = $bodyAnimation/frontArm/hand.global_position
